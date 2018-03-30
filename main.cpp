@@ -1,4 +1,4 @@
-#include <QtGui>
+﻿#include <QtGui>
 #include <QtQuick>
 #include <QQmlEngine>
 
@@ -27,7 +27,7 @@ int main(int argc, char **argv)
         //path
         auto& path = child->painterPath();
         path.moveTo(rect.topLeft());
-        path.addText(50, 50, QFont("Arial", 45), "12345678");
+        path.addText(50, 50, QFont("Arial", 45), u8"бебе-12345678");
 
         path.lineTo(rect.center());
         path.addRect(rect);

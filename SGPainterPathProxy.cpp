@@ -4,6 +4,8 @@
 #include <QtQuick/qsgflatcolormaterial.h>
 #include <private/qtriangulator_p.h>
 
+#include "shader.h"
+
 
 SGPainterPathProxy::SGPainterPathProxy(QQuickItem *parent)
     : QQuickItem(parent)
@@ -56,12 +58,18 @@ QSGNode *SGPainterPathProxy::updatePaintNode(QSGNode *oldNode, UpdatePaintNodeDa
         node->setGeometry(geometry);
         node->setFlag(QSGNode::OwnsGeometry);
 
-        QSGFlatColorMaterial *material = new QSGFlatColorMaterial;
-        material->setColor(Qt::blue);
+        //shader material
+        QSGSimpleMaterial<State> *material = Shader::createMaterial();
+        material->setFlag(QSGMaterial::Blending);
+
+        //flat material
+        QSGFlatColorMaterial* flatMaterial = new QSGFlatColorMaterial;
+        flatMaterial->setColor(Qt::blue);
+
+        //node->setMaterial(flatMaterial);
         node->setMaterial(material);
+
         node->setFlag(QSGNode::OwnsMaterial);
-
-
     } else {
         node = static_cast<QSGGeometryNode *>(oldNode);
         geometry = node->geometry();

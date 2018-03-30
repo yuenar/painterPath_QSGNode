@@ -1,5 +1,7 @@
 <RCC>
     <qresource prefix="/">
         <file>main.qml</file>
+        <file>shaders/brush.vsh</file>
+        <file>shaders/brush.fsh</file>
     </qresource>
 </RCC>

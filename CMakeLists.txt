@@ -22,19 +22,21 @@ FILE (GLOB QML
 
 FILE (GLOB HDR
     SGPainterPathProxy.h
+    shader.h
 )
 
 FILE (GLOB SRC
     main.cpp
     SGPainterPathProxy.cpp
+    shader.cpp
     res.qrc
 )
 
 add_executable(${PROJECT_NAME} ${SRC} ${HDR} ${QML})
 
-source_group("QML Files" FILES ${QML})
-source_group("SRC" FILES ${SRC})
-source_group("HDR" FILES ${HDR})
+source_group("Qml" FILES ${QML})
+source_group("Sources" FILES ${SRC})
+source_group("Headers" FILES ${HDR})
 
 target_include_directories(${PROJECT_NAME} PRIVATE ${Qt5Core_PRIVATE_INCLUDE_DIRS})
 target_include_directories(${PROJECT_NAME} PRIVATE ${Qt5Gui_PRIVATE_INCLUDE_DIRS})
