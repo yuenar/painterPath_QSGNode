@@ -2,13 +2,13 @@
 #include <QtQuick>
 #include <QQmlEngine>
 
-#include "SGPainterPathProxy.h"
+#include "proxyItem.h"
 
 int main(int argc, char **argv)
 {
     QGuiApplication app(argc, argv);
 
-    qmlRegisterType<SGPainterPathProxy>("CustomGeometry", 1, 0, "SGPainterPathProxy");
+    qmlRegisterType<ProxyItem>("ProxyItem", 1, 0, "Proxy");
 
     QQuickView view;
     QSurfaceFormat format = view.format();
@@ -19,15 +19,13 @@ int main(int argc, char **argv)
 
     auto rootObject = view.rootObject();
 
-    auto child = rootObject->findChild<SGPainterPathProxy*>("proxy");
+    auto proxy = rootObject->findChild<ProxyItem*>("proxy");
 
-    if (child) {
+    if (proxy) {
         QRectF rect(QPointF(0,0), QSize(100,100));
 
-        child->setQQuickWindow(&view);
-
         //path
-        auto& path = child->painterPath();
+        auto& path = proxy->painterPath();
         path.moveTo(rect.topLeft());
         path.addText(50, 50, QFont("Arial", 45), u8"бебе-12345678");
 
@@ -36,7 +34,7 @@ int main(int argc, char **argv)
         path.addEllipse(QPointF(100,100),20,30);
 
         //stroker
-        auto& stroker = child->strokerPath();
+        auto& stroker = proxy->stroker();
         stroker.setCapStyle(Qt::RoundCap);
         stroker.setJoinStyle(Qt::BevelJoin);
         stroker.setWidth(5.0f);
@@ -44,7 +42,6 @@ int main(int argc, char **argv)
     }
 
     view.show();
-
 
     app.exec();
 }

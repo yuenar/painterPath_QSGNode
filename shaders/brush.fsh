@@ -6,11 +6,12 @@ uniform lowp vec4 color;
 varying highp vec2 vTexCoord;
 varying lowp vec2 vShadeCoord;
 
-#define PI 3.14159265359
+//#define PI 3.14159265359
 
 void main()
 {
-    lowp float shade = texture2D(texture, vTexCoord).r * 0.05 - length(vec2(0.5, 0.4) - vShadeCoord) * 0.3;
+    lowp float shade = texture2D(texture, vTexCoord).r * 0.55 - length(vec2(0.5, 0.4) - vShadeCoord) * 0.3;
+
     lowp vec4 c = vec4(color.xyz + shade, color.w);
     gl_FragColor = c * qt_Opacity;
 }

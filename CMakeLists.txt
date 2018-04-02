@@ -21,14 +21,16 @@ FILE (GLOB QML
 )
 
 FILE (GLOB HDR
-    SGPainterPathProxy.h
-    shader.h
+    proxyItem.h
+    penNode.h
+    brushNode.h
 )
 
 FILE (GLOB SRC
     main.cpp
-    SGPainterPathProxy.cpp
-    shader.cpp
+    proxyItem.cpp
+    penNode.cpp
+    brushNode.cpp
     res.qrc
 )
 
