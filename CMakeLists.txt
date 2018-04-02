@@ -32,11 +32,17 @@ FILE (GLOB SRC
     res.qrc
 )
 
-add_executable(${PROJECT_NAME} ${SRC} ${HDR} ${QML})
+FILE (GLOB SHADERS
+    shaders/brush.fsh
+    shaders/brush.vsh
+)
+
+add_executable(${PROJECT_NAME} ${SRC} ${HDR} ${QML} ${SHADERS})
 
 source_group("Qml" FILES ${QML})
 source_group("Sources" FILES ${SRC})
 source_group("Headers" FILES ${HDR})
+source_group("Shaders" FILES ${SHADERS})
 
 target_include_directories(${PROJECT_NAME} PRIVATE ${Qt5Core_PRIVATE_INCLUDE_DIRS})
 target_include_directories(${PROJECT_NAME} PRIVATE ${Qt5Gui_PRIVATE_INCLUDE_DIRS})

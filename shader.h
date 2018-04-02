@@ -1,39 +1,33 @@
 ﻿#pragma once 
 
 #include <QColor>
-
 #include <QSGMaterial>
 #include <QSGSimpleMaterial>
 
-/// <summary>
-/// State
-/// </summary>
-struct State
+struct BrushMaterial
 {
-    QColor color;
+    ~BrushMaterial() {
+        delete texture;
+    }
 
-    int compare(const State *other) const;
+    QColor color;
+    QSGTexture *texture;
 };
 
-/// <summary>
-/// Shader
-/// </summary>
-class Shader : public QSGSimpleMaterialShader<State>
+class BrushShader : public QSGSimpleMaterialShader<BrushMaterial>
 {
-    QSG_DECLARE_SIMPLE_COMPARABLE_SHADER(Shader, State);
-
-    Shader();
+    QSG_DECLARE_SIMPLE_SHADER(BrushShader, BrushMaterial)
 
 public:
-    //const char* vertexShader() const;
-    //const char* fragmentShader() const;
+    BrushShader();
 
     QList<QByteArray> attributes() const;
 
-    void updateState(const State *state, const State *);
-
+    void updateState(const BrushMaterial* m, const BrushMaterial*);
     void resolveUniforms();
 
 private:
-    int id_color;
+    int m_id_color;
+    int m_id_texture;
+    int m_id_textureSize;
 };

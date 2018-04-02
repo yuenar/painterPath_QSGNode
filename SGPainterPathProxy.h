@@ -10,6 +10,7 @@ class SGPainterPathProxy : public QQuickItem
 
     QPainterPath            m_painterPath;
     QPainterPathStroker     m_strokerPath;
+    QQuickWindow*           m_window { nullptr };
 
 private:
     void generateTriangles(QSGGeometry* geometry);
@@ -20,6 +21,8 @@ public:
 
     QPainterPath& painterPath();
     QPainterPathStroker& strokerPath();
+
+    void setQQuickWindow(QQuickWindow* _window);
 
 
     QSGNode *updatePaintNode(QSGNode *, UpdatePaintNodeData *) Q_DECL_FINAL;

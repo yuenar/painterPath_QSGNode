@@ -1,18 +1,16 @@
 
-// fragment shader
-// shadertype=glsl
-
-uniform lowp vec4 color;
+uniform sampler2D texture;
 uniform lowp float qt_Opacity;
-uniform lowp float spread;
+uniform lowp vec4 color;
 
-varying lowp float vT;
+varying highp vec2 vTexCoord;
+varying lowp vec2 vShadeCoord;
 
 #define PI 3.14159265359
 
-void main(void)
+void main()
 {
-    lowp float tt = smoothstep(spread, 1.0, sin(vT * PI));
-
-    gl_FragColor = color * qt_Opacity * tt;
+    lowp float shade = texture2D(texture, vTexCoord).r * 0.05 - length(vec2(0.5, 0.4) - vShadeCoord) * 0.3;
+    lowp vec4 c = vec4(color.xyz + shade, color.w);
+    gl_FragColor = c * qt_Opacity;
 }

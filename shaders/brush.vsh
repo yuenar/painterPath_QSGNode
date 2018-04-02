@@ -1,20 +1,15 @@
 
-// vertex shader
-// shadertype=glsl
+attribute highp vec4 aVertex;
+attribute highp vec2 aTexCoord;
 
-attribute highp vec4 pos;
-attribute highp float t;
-
-uniform lowp float size;
 uniform highp mat4 qt_Matrix;
+uniform highp vec2 textureSize;
 
-varying lowp float vT;
+varying highp vec2 vTexCoord;
+varying lowp vec2 vShadeCoord;
 
-void main(void)
-{
-    vec4 adjustedPos = pos;
-    adjustedPos.y += (t * size);
-    gl_Position = qt_Matrix * adjustedPos;
-
-    vT = t;
+void main() {
+    gl_Position = qt_Matrix * aVertex;
+    vTexCoord = aVertex.xy * textureSize;
+    vShadeCoord = aTexCoord;
 }

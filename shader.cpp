@@ -1,38 +1,42 @@
-﻿#include "shader.h"
+﻿#include <QtQuick/QSGTexture>
 
-int State::compare(const State *other) const
-{
-    uint rgb = color.rgba();
-    uint otherRgb = other->color.rgba();
+#include "shader.h"
 
-    if (rgb == otherRgb) {
-        return 0;
-    }
-    else if (rgb < otherRgb) {
-        return -1;
-    }
-    else {
-        return 1;
-    }
-}
 
-Shader::Shader()
+BrushShader::BrushShader(): 
+m_id_color(-1),
+m_id_texture(-1),
+m_id_textureSize(-1)
 {
     setShaderSourceFile(QOpenGLShader::Vertex, ":/shaders/brush.vsh");
     setShaderSourceFile(QOpenGLShader::Fragment, ":/shaders/brush.fsh");
 }
 
-QList<QByteArray> Shader::attributes() const
+QList<QByteArray> BrushShader::attributes() const
 {
     return QList<QByteArray>() << "aVertex" << "aTexCoord";
 }
 
-void Shader::updateState(const State *state, const State *)
+void BrushShader::updateState(const BrushMaterial* m, const BrushMaterial*)
 {
-    program()->setUniformValue(id_color, state->color);
+    // Set the color
+    program()->setUniformValue(m_id_color, m->color);
+
+    // Bind the texture and set program to use texture unit 0 (the default)
+    m->texture->bind();
+
+    // Then set the texture size so we can adjust the texture coordinates accordingly in the
+    // vertex shader..
+    QSize s = m->texture->textureSize();
+    program()->setUniformValue(m_id_textureSize, QSizeF(1.0 / s.width(), 1.0 / s.height()));
 }
 
-void Shader::resolveUniforms()
+void BrushShader::resolveUniforms()
 {
-    id_color = program()->uniformLocation("color");
+    m_id_texture = program()->uniformLocation("texture");
+    m_id_textureSize = program()->uniformLocation("textureSize");
+    m_id_color = program()->uniformLocation("color");
+
+    // We will only use texture unit 0, so set it only once.
+    program()->setUniformValue(m_id_texture, 0);
 }

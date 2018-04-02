@@ -24,6 +24,8 @@ int main(int argc, char **argv)
     if (child) {
         QRectF rect(QPointF(0,0), QSize(100,100));
 
+        child->setQQuickWindow(&view);
+
         //path
         auto& path = child->painterPath();
         path.moveTo(rect.topLeft());
