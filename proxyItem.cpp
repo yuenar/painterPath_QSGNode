@@ -5,7 +5,6 @@
 #include <QSGTexture> 
 #include <QPainter> 
 
-#include "shader.h"
 #include "penNode.h"
 #include "brushNode.h"
 
@@ -41,13 +40,12 @@ QPainterPathStroker& ProxyItem::stroker()
 
 QSGTexture* ProxyItem::createTexture()
 {
-    // Make some noise...
     QImage image(TEXTURE_SIZE, TEXTURE_SIZE, QImage::Format_RGB32);
 
     QPainter p;
    
     p.begin(&image);
-    p.drawText(10, 10, "333");
+    p.drawText(10, 10, "!");
     p.drawLine(0, 0, 15, 15);
     p.end();
 
