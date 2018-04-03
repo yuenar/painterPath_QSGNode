@@ -83,7 +83,10 @@ QSGNode *ProxyItem::updatePaintNode(QSGNode *oldNode, UpdatePaintNodeData *)
         n->brush = new BrushNode(texture);
 
         n->appendChildNode(n->pen);
+        n->pen->setFlag(QSGNode::OwnedByParent);
+
         n->appendChildNode(n->brush);
+        n->brush->setFlag(QSGNode::OwnedByParent);
     }
 
     n->pen->update(m_stroker.createStroke(m_painterPath));

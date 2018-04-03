@@ -65,9 +65,10 @@ private:
 };
 
 BrushNode::BrushNode(QSGTexture* texture)
-    : m_geometry(QSGGeometry::defaultAttributes_TexturedPoint2D(), 4)
+    : m_geometry(QSGGeometry::defaultAttributes_TexturedPoint2D(), 0, 0, GL_UNSIGNED_INT)
 {
     setGeometry(&m_geometry);
+    m_geometry.setDrawingMode(GL_TRIANGLES);
 
     QSGSimpleMaterial<BrushMaterial>* m = BrushShader::createMaterial();
 
@@ -85,9 +86,9 @@ void BrushNode::update(const QPainterPath& path,const QRectF &bounds)
 
     // Fill vertex buffer
     m_geometry.allocate(triangles.vertices.size() / 2, triangles.indices.size());
-    QSGGeometry::Point2D *vertex = m_geometry.vertexDataAsPoint2D();
+    QSGGeometry::TexturedPoint2D *vertex = m_geometry.vertexDataAsTexturedPoint2D();
     for (int i = 0; i < m_geometry.vertexCount(); ++i)
-        vertex[i].set(triangles.vertices.at(2 * i), triangles.vertices.at(2 * i + 1));
+        vertex[i].set(triangles.vertices.at(2 * i), triangles.vertices.at(2 * i + 1), 1, 0);
 
     // Fill index buffer
     uint *indices = m_geometry.indexDataAsUInt();
@@ -95,6 +96,5 @@ void BrushNode::update(const QPainterPath& path,const QRectF &bounds)
         qFatal("Unexpected geometry index type");
     memcpy(indices, triangles.indices.data(), triangles.indices.size() * sizeof(*indices));
 
-    QSGGeometry::updateTexturedRectGeometry(geometry(), bounds, QRectF(0, 0, 1, 1));
     markDirty(QSGNode::DirtyGeometry);
 }
