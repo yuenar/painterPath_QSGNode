@@ -2,6 +2,9 @@
 #include <QtQuick/QSGTexture>
 #include <QtQuick/QQuickWindow>
 
+#include <private/qtriangulator_p.h>
+#include <QPainterPath>
+
 #include "brushNode.h"
 
 #define TEXTURE_SIZE 64
@@ -76,8 +79,22 @@ BrushNode::BrushNode(QSGTexture* texture)
     setFlag(OwnsMaterial, true);
 }
 
-void BrushNode::update(const QRectF &bounds)
+void BrushNode::update(const QPainterPath& path,const QRectF &bounds)
 {
+    const QTriangleSet triangles{ qTriangulate(path) };
+
+    // Fill vertex buffer
+    m_geometry.allocate(triangles.vertices.size() / 2, triangles.indices.size());
+    QSGGeometry::Point2D *vertex = m_geometry.vertexDataAsPoint2D();
+    for (int i = 0; i < m_geometry.vertexCount(); ++i)
+        vertex[i].set(triangles.vertices.at(2 * i), triangles.vertices.at(2 * i + 1));
+
+    // Fill index buffer
+    uint *indices = m_geometry.indexDataAsUInt();
+    if (triangles.indices.type() != QVertexIndexVector::UnsignedInt)
+        qFatal("Unexpected geometry index type");
+    memcpy(indices, triangles.indices.data(), triangles.indices.size() * sizeof(*indices));
+
     QSGGeometry::updateTexturedRectGeometry(geometry(), bounds, QRectF(0, 0, 1, 1));
     markDirty(QSGNode::DirtyGeometry);
 }

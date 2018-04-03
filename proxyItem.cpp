@@ -87,9 +87,7 @@ QSGNode *ProxyItem::updatePaintNode(QSGNode *oldNode, UpdatePaintNodeData *)
     }
 
     n->pen->update(m_stroker.createStroke(m_painterPath));
-
-
-    n->brush->update(boundingRect());
+    n->brush->update(m_painterPath,boundingRect());
     
 
     return n;

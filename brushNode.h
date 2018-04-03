@@ -2,6 +2,7 @@
 
 #include <QSGGeometryNode>
 
+
 class BrushNode : public QSGGeometryNode
 {
     QSGGeometry             m_geometry;
@@ -9,5 +10,5 @@ class BrushNode : public QSGGeometryNode
 public:
     BrushNode(QSGTexture * texture);
 
-    void update(const QRectF &bounds);
+    void update(const QPainterPath& path,const QRectF &bounds);
 };
