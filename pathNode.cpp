@@ -5,7 +5,7 @@
 #include <private/qtriangulator_p.h>
 #include <QPainterPath>
 
-#include "brushNode.h"
+#include "pathNode.h"
 
 #define TEXTURE_SIZE 64
 
@@ -24,7 +24,11 @@ class BrushShader : public QSGSimpleMaterialShader<BrushMaterial>
     QSG_DECLARE_SIMPLE_SHADER(BrushShader, BrushMaterial)
 
 public:
-    BrushShader() : id_color(-1), id_texture(-1), id_textureSize(-1) {
+    BrushShader() : 
+        id_color(-1), 
+        id_texture(-1),
+        id_textureSize(-1)
+    {
         setShaderSourceFile(QOpenGLShader::Vertex, ":/shaders/brush.vsh");
         setShaderSourceFile(QOpenGLShader::Fragment, ":/shaders/brush.fsh");
     }
@@ -64,7 +68,7 @@ private:
     int id_textureSize;
 };
 
-BrushNode::BrushNode(QSGTexture* texture)
+PathNode::PathNode(QSGTexture* texture,const QColor& color)
     : m_geometry(QSGGeometry::defaultAttributes_TexturedPoint2D(), 0, 0, GL_UNSIGNED_INT)
 {
     setGeometry(&m_geometry);
@@ -73,14 +77,14 @@ BrushNode::BrushNode(QSGTexture* texture)
     QSGSimpleMaterial<BrushMaterial>* m = BrushShader::createMaterial();
 
     m->state()->texture = texture;
-    m->state()->color = QColor("#000014");
+    m->state()->color = color;
     m->setFlag(QSGMaterial::Blending);
 
     setMaterial(m);
     setFlag(OwnsMaterial, true);
 }
 
-void BrushNode::update(const QPainterPath& path,const QRectF &bounds)
+void PathNode::update(const QPainterPath& path)
 {
     const QTriangleSet triangles{ qTriangulate(path) };
 

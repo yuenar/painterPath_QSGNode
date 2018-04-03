@@ -1,20 +1,18 @@
 ﻿#include "proxyItem.h"
 
-#include <QtQuick/QSGNode>
 #include <QtQuick/QQuickWindow>
 #include <QSGTexture> 
 #include <QPainter> 
 
-#include "penNode.h"
-#include "brushNode.h"
+#include "pathNode.h"
 
 #define TEXTURE_SIZE 15
 
-class ProxyNode : public QSGNode
+struct PainterPathNode : public QSGNode
 {
-public:
-    PenNode * pen;
-    BrushNode * brush;
+    PathNode*           strokeNode {nullptr};
+    PathNode*           fillNode {nullptr};
+    QSGTransformNode*   transformNode {nullptr};
 };
 
 ProxyItem::ProxyItem(QQuickItem *parent)
@@ -38,16 +36,24 @@ QPainterPathStroker& ProxyItem::stroker()
     return m_stroker;
 }
 
-QSGTexture* ProxyItem::createTexture()
+QBrush& ProxyItem::strokeBrush()
+{
+    return m_strokeBrush;
+}
+
+QBrush& ProxyItem::fillBrush()
+{
+    return m_fillBrush;
+}
+
+QSGTexture* ProxyItem::createTextureFromBrush(const QBrush& _brush)
 {
     QImage image(TEXTURE_SIZE, TEXTURE_SIZE, QImage::Format_RGB32);
 
-    QPainter p;
-   
-    p.begin(&image);
-    p.drawText(10, 10, "!");
-    p.drawLine(0, 0, 15, 15);
-    p.end();
+    QPainter painter;
+    painter.begin(&image);
+    painter.fillRect(QRect(0,0,TEXTURE_SIZE, TEXTURE_SIZE),_brush);
+    painter.end();
 
     auto quickwindow = window();
 
@@ -65,33 +71,32 @@ QSGTexture* ProxyItem::createTexture()
 
 QSGNode *ProxyItem::updatePaintNode(QSGNode *oldNode, UpdatePaintNodeData *)
 {
-    ProxyNode *n = static_cast<ProxyNode*>(oldNode);
+    PainterPathNode *n = static_cast<PainterPathNode*>(oldNode);
 
     QRectF rect = boundingRect();
 
-    if (rect.isEmpty()) {
+    if (rect.isEmpty())
+    {
         delete n;
-        return 0;
+        return nullptr;
     }
 
     if (!n) {
-        n = new ProxyNode();
+        n = new PainterPathNode();
 
-        n->pen = new PenNode();
+        n->strokeNode = new PathNode(createTextureFromBrush(m_strokeBrush),m_strokeBrush.color());
+        n->fillNode = new PathNode(createTextureFromBrush(m_fillBrush), m_fillBrush.color());
 
-        auto texture = createTexture();
-        n->brush = new BrushNode(texture);
+        //отрисовываются в порядке добавления
+        n->appendChildNode(n->fillNode);
+        n->fillNode->setFlag(QSGNode::OwnedByParent);
 
-        n->appendChildNode(n->pen);
-        n->pen->setFlag(QSGNode::OwnedByParent);
-
-        n->appendChildNode(n->brush);
-        n->brush->setFlag(QSGNode::OwnedByParent);
+        n->appendChildNode(n->strokeNode);
+        n->strokeNode->setFlag(QSGNode::OwnedByParent);
     }
 
-    n->pen->update(m_stroker.createStroke(m_painterPath));
-    n->brush->update(m_painterPath,boundingRect());
-    
+    n->fillNode->update(m_painterPath);
+    n->strokeNode->update(m_stroker.createStroke(m_painterPath));
 
     return n;
 }

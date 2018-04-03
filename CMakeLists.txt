@@ -22,15 +22,13 @@ FILE (GLOB QML
 
 FILE (GLOB HDR
     proxyItem.h
-    penNode.h
-    brushNode.h
+    pathNode.h
 )
 
 FILE (GLOB SRC
     main.cpp
     proxyItem.cpp
-    penNode.cpp
-    brushNode.cpp
+    pathNode.cpp
     res.qrc
 )
 
